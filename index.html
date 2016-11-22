@@ -18,13 +18,17 @@
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
   </head>
   <body class="mixpanel-platform-body">
+    <div>Api Secret:</div><div><input id='api-secret' size='35' value='No need to change if already in project'></div>
+    <div>PortalGuid:</div><div><input id='PortalGuid' value='008e832a-8725-4f22-b1fc-54461ca8f6f9' size='10'></div>
+    <div><button onclick='display()'>Display Account Activity</button></div>
+    <div id='display'></div>
 
 <script id='jql-query'>
 
 MP.api.jql(
   function main() {
-  
-  var PortalGuid = "008e832a-8725-4f22-b1fc-54461ca8f6f9"
+  var PortalGuid = document.getElementById('PortalGuid').value)
+  // var PortalGuid = "008e832a-8725-4f22-b1fc-54461ca8f6f9"
   var days = 30;
   var endDate = new Date();
   var startDate = new Date();
