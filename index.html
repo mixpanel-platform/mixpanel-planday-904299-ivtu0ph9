@@ -22,30 +22,55 @@
     <div>PortalGuid:</div><div><input id='PortalGuid' value='008e832a-8725-4f22-b1fc-54461ca8f6f9' size='10'></div>
     <div><button onclick='display()'>Display Account Activity</button></div>
     <div id='display'></div>
+<script>
 
-<script id='jql-query'>
+function display() {
+      var secret = document.getElementById('api-secret').value;
+        var PortalGuid = document.getElementById('PortalGuid').value)
+      if (secret.indexOf(' ') == -1)
+        changeCredentials(secret);
+      displayActivity(PortalGuid);
+    }
 
-MP.api.jql(
-  function main() {
-  var PortalGuid = document.getElementById('PortalGuid').value)
-  // var PortalGuid = "008e832a-8725-4f22-b1fc-54461ca8f6f9"
-  var days = 30;
-  var endDate = new Date();
-  var startDate = new Date();
-  startDate.setDate(endDate.getDate() - days);
-  
-  return Events({
-    from_date: startDate.toJSON().slice(0,10),
-    to_date:   endDate.toJSON().slice(0,10),
-  })
-  .filter(function(item){return item.properties.PortalGuid == PortalGuid})
-  .groupBy(["name"], mixpanel.reducer.count());
-}
-
-).done(function(results) {
-    console.log(results);
-});
-
+  function displayActivity(PortalGuid) {
+        var script = $('#jql-query').html();
+      MP.api.jql(script, {PortalGuid: PortalGuid}).done(function(res) {
+        if (res[0]) {
+          res = res[0];
+          var table = '<table><tr><th>Event</th><th>Property</th><th>Count</th><th>Percentage</th></tr><tr><td>';
+          for (var i = 0; i < res.length; i++) {
+            if (res[i] == ',')
+              table += '</td><td>';
+            else if (res[i] == '~')
+              table += '</td></tr><tr><td>'
+            else
+              table += res[i];
+          }
+          table += '</td></tr></table>';
+          document.getElementById('display').innerHTML = table;
+        }
+        else
+          console.log('Query retuned nothing');
+      });
+    }
+        
+        
+        <script id='jql-query'>
+          function main() {
+          // var PortalGuid = "008e832a-8725-4f22-b1fc-54461ca8f6f9"
+          var days = 30;
+          var endDate = new Date();
+          var startDate = new Date();
+          startDate.setDate(endDate.getDate() - days);
+          
+          return Events({
+            from_date: startDate.toJSON().slice(0,10),
+            to_date:   endDate.toJSON().slice(0,10),
+          })
+          .filter(function(item){return item.properties.PortalGuid == PortalGuid})
+          .groupBy(["name"], mixpanel.reducer.count());
+          }
+        }
 
 
 </script>
